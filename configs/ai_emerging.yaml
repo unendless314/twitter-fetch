@@ -1,0 +1,44 @@
+# 主題識別碼（用於檔名、資料夾名）
+id: "ai_emerging"
+
+# 搜尋策略
+search:
+  tool: "semantic"      # keyword (精準關鍵字) 或 semantic (語意描述)
+  mode: "Latest"        # Top (熱門) 或 Latest (最新時間排序)
+  limit: 10             # 預期返回推文數量
+  lookback_days: 3      # 語意搜尋建議縮短時間範圍，避免雜訊過多
+
+  # Semantic 模式：自然語言描述你想找什麼（不需要提前知道關鍵字）
+  query: |
+    AI and machine learning community breakthroughs, surprising new model releases,
+    paradigm shifts, or emerging research trends that the tech community is
+    excited about — including things that may not yet have a well-known name.
+
+  # 過濾條件參數（獨立於查詢邏輯之外）
+  conditions:
+    min_faves: 100
+    filter: "-replies"    # 排除類型（加 -）：-replies | -images | -videos
+                           # 只限類型（不加 -）：images | videos | news | links
+    lang: "en OR lang:zh" # 語言：en | zh | ja | ko（多語言用 OR 連接）
+    from_accounts:
+      - OpenAI
+      - AnthropicAI
+      - GoogleDeepMind
+
+# 內容篩選說明
+filter:
+  include: "社群熱烈討論的新技術、令人意外的研究結果、尚無定論但引發廣泛關注的新發展"
+  exclude: "價格炒作、加密貨幣相關、無根據謠言、純粹的產品廣告"
+
+# 輸出格式要求
+output:
+  format: |
+    請以結構化 JSON 格式返回，每條推文包含以下欄位：
+    - author: 作者顯示名稱
+    - username: @用戶名（不含@）
+    - time: 發布時間（ISO 8601 格式，含時區，例如 2026-02-23T14:30:00Z）
+    - content: 推文完整內容（保留原始文字，包含連結）
+    - url: 推文永久連結（格式：https://x.com/username/status/post_id）
+    - engagement: {likes: 數量, retweets: 數量, replies: 數量}
+    - media_urls: 推文中的圖片或影片連結陣列（無媒體則為空陣列 []）
+    - relevance_note: 簡短說明為何符合此主題（1-2句）

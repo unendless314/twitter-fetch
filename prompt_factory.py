@@ -17,6 +17,7 @@ PROMPTS_DIR = Path("prompts")
 TOOL_NAMES = {
     "keyword": "Keyword Search",
     "semantic": "Semantic Search",
+    "hybrid": "Hybrid Search",
 }
 
 

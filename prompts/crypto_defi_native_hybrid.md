@@ -19,9 +19,9 @@
 聚焦於專業 DeFi 社群討論，而非純粹的投機交易。
 
 推薦檢索策略：
-- DeFi 術語：(DeFi OR "yield farming" OR "liquidity pool" OR vault OR arbitrage OR "funding rate" OR FDV OR TVL OR "buyback" OR DCA OR staking OR whale OR tokenomics OR "smart contract")
-- 協議/機制：(protocol OR airdrop OR governance OR "AMM" OR DEX OR APY OR impermanent OR MEV OR memecoin)
-- 排除條件：-scam -rug -gem -"100x" -shitcoin -"guaranteed"
+- 核心機制與敘事：(MEV OR "prediction market" OR restaking OR AVS OR LRT OR "blockchain" OR "zero knowledge" OR ZKP)
+- 深度技術與數據：(exploit OR audit OR "flash loan" OR "liquidity" OR "smart contract" OR "on-chain data")
+- 排除條件：-scam -rug -gem -"100x" -shitcoin -"guaranteed" -giveaway
 
 若上述 keywords 未找到合適結果，可依據「目標描述」擴大或調整搜尋方向，但務必嚴格遵守排除條件。
 ```

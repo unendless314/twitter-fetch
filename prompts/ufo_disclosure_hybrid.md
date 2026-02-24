@@ -19,8 +19,8 @@
 討論披露工作進展及 UAP 相關證據。
 
 推薦檢索策略：
-- 核心關鍵字：(UFO OR UAP OR "disclosure" OR "congressional hearing" OR "government report" OR "pentagon" OR "whistleblower")
-- 技術/實體描述：(alien OR "non-human" OR extraterrestrial OR "advanced technology" OR "gravitic propulsion" OR "reverse engineering")
+- 立法與政府機構：(UAPDA OR AARO OR "Schumer amendment" OR FOIA OR SCIF OR "intelligence committee")
+- 深度調查與吹哨人：("David Grusch" OR "first-hand" OR "classified" OR NDA OR "crash retrieval" OR NHI)
 
 若上述 keywords 未找到合適結果，可依據「目標描述」擴大或調整搜尋方向。
 ```

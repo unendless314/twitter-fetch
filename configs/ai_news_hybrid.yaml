@@ -16,9 +16,9 @@ search:
     聚焦於技術社群真正感到興奮且正在熱烈討論的內容。
 
     推薦檢索策略：
-    - 核心關鍵字：(artificial intelligence OR AI OR "machine learning")
-    - 事件類型：(breakthrough OR release OR announced OR launched OR benchmark)
-    - 排除條件：-crypto -blockchain -token -coin -nft
+    - 核心技術/架構：(LLM OR VLM OR "foundation model" OR RAG OR "fine-tuning" OR agentic OR "open weights")
+    - 研發與開源術語：(arXiv OR paper OR SOTA OR "state of the art" OR repo OR github OR benchmark)
+    - 排除條件：-crypto -blockchain -token -coin -nft -web3
 
     若上述 keywords 未找到合適結果，可依據「目標描述」擴大或調整搜尋方向，但務必嚴格遵守排除條件。
 

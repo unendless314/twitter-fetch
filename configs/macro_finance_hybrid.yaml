@@ -16,8 +16,8 @@ search:
     對宏觀主題的專業討論，而非個股推薦。
 
     推薦檢索策略：
-    - 宏觀主體：(macro OR "monetary policy" OR "interest rate" OR Fed OR ECB OR "central bank")
-    - 市場指標：("bond yield" OR "yield curve" OR inflation OR recession OR "GDP growth" OR FX OR forex OR commodity)
+    - 深度分析與機構：(research OR "white paper" OR "institutional research" OR BofA OR Goldman OR Morgan OR "hedge fund")
+    - 專業指標與風險：(VIX OR SOFR OR "basis trade" OR "tail risk" OR "liquidity crunch" OR "quantitative tightening" OR QT)
     - 排除條件：-crypto -bitcoin -ethereum -nft -defi -airdrop
 
     若上述 keywords 未找到合適結果，可依據「目標描述」擴大或調整搜尋方向，但務必嚴格遵守排除條件。

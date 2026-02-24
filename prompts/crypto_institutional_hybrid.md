@@ -19,9 +19,9 @@
 聚焦於已建立聲譽的加密機構研究、監管文件和基本面鏈上指標。
 
 推薦檢索策略：
-- 核心資產：(Bitcoin OR BTC OR Ethereum OR ETH OR "crypto ETF")
-- 機構/技術：(institutional OR ETF OR adoption OR regulation OR halving OR "layer 2" OR upgrade OR staking OR "spot ETF" OR inflow OR outflow OR "hash rate")
-- 排除條件：-airdrop -gem -"100x" -scam -memecoin -shitcoin
+- 傳統金融與合規：(TradFi OR custody OR SEC OR "regulatory framework" OR compliance OR MiCA OR "structured products" OR RWA)
+- 機構動態與宏觀：("asset management" OR BlackRock OR Fidelity OR "balance sheet" OR "treasury" OR "capital allocation")
+- 排除條件：-airdrop -gem -"100x" -scam -memecoin -shitcoin -giveaway
 
 若上述 keywords 未找到合適結果，可依據「目標描述」擴大或調整搜尋方向，但務必嚴格遵守排除條件。
 ```

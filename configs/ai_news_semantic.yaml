@@ -1,5 +1,5 @@
 # 主題識別碼（用於檔名、資料夾名）
-id: "ai_emerging"
+id: "ai_news_semantic"
 
 # 搜尋策略
 search:
@@ -10,20 +10,20 @@ search:
 
   # Semantic 模式：自然語言描述你想找什麼（不需要提前知道關鍵字）
   query: |
-    AI and machine learning community breakthroughs, surprising new model releases,
-    paradigm shifts, or emerging research trends that the tech community is
+    AI and machine learning breakthroughs, surprising new ai model releases,
+    paradigm shifts, benchmarks, or emerging research trends that the tech community is
     excited about — including things that may not yet have a well-known name.
 
   # 過濾條件參數（獨立於查詢邏輯之外）
   conditions:
     min_faves: 100
-    filter: "-replies"    # 排除類型（加 -）：-replies | -images | -videos
+#      filter: "-replies"    # 排除類型（加 -）：-replies | -images | -videos
                            # 只限類型（不加 -）：images | videos | news | links
     lang: "en OR lang:zh" # 語言：en | zh | ja | ko（多語言用 OR 連接）
-    from_accounts:
-      - OpenAI
-      - AnthropicAI
-      - GoogleDeepMind
+#    from_accounts:
+#      - OpenAI
+#      - AnthropicAI
+#      - GoogleDeepMind
 
 # 內容篩選說明
 filter:

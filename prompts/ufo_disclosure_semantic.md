@@ -1,35 +1,37 @@
-# X Search 任務：ai_breakthrough
+# X Search 任務：ufo_disclosure_semantic
 
 ## 任務說明
 請使用 X (Twitter) 的搜尋功能，幫我收集符合以下條件的推文。
 
 ## 搜尋策略
-- **工具類型**：Keyword Search
+- **工具類型**：Semantic Search
 - **排序模式**：Latest
 - **數量限制**：10 條相關推文
 
 ## 搜尋條件
 
-### 查詢主體（Keyword Search）
+### 查詢主體（Semantic Search）
 ```
-(artificial intelligence OR AI OR "machine learning")
-(breakthrough OR release OR announced OR launched)
--crypto -blockchain -token -coin -nft
+Government UFO/UAP disclosure developments, including Congressional hearings,
+Pentagon reports, military whistleblower testimonies, declassified documents,
+and official investigations into unidentified aerial phenomena.
+Focus on credible sources such as government officials, military personnel,
+investigative journalists, and academic researchers discussing disclosure
+efforts and UAP evidence.
 ```
 
 ### 條件參數
-- `min_faves:100`（互動門檻）
-- `-filter:replies`（排除類型，可選：replies / images / videos / news / links）
+- `min_faves:60`（互動門檻）
 - `lang:en OR lang:zh`（語言過濾）
 
 
 ## 內容篩選
 
 ### 優先收錄
-官方公告、技術論文、有數據或截圖佐證的消息、知名研究者分享
+官方披露進展、軍事證人證詞、政府調查報告、解密文件分析、學術研究、主流媒體深度報導
 
 ### 排除內容
-價格炒作、加密貨幣相關、無根據謠言、純粹的產品廣告
+純娛樂內容、無根據猜測、科幻創作
 
 ## 輸出格式
 請以結構化 JSON 格式返回，每條推文包含以下欄位：
@@ -40,7 +42,7 @@
 - url: 推文永久連結（格式：https://x.com/username/status/post_id）
 - engagement: {likes: 數量, retweets: 數量, replies: 數量}
 - media_urls: 推文中的圖片或影片連結陣列（無媒體則為空陣列 []）
-- relevance_note: 簡短說明為何符合此主題（1-2句）
+- relevance_note: 簡短說明為何符合此主題（1-2句，請說明與 UFO/Disclosure 主題的關聯性）
 
 ## 注意事項
 1. 請確保資訊準確，包含正確的推文連結

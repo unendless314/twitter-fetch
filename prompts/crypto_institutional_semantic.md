@@ -1,4 +1,4 @@
-# X Search 任務：ai_emerging
+# X Search 任務：crypto_institutional_semantic
 
 ## 任務說明
 請使用 X (Twitter) 的搜尋功能，幫我收集符合以下條件的推文。
@@ -12,28 +12,25 @@
 
 ### 查詢主體（Semantic Search）
 ```
-AI and machine learning community breakthroughs, surprising new model releases,
-paradigm shifts, or emerging research trends that the tech community is
-excited about — including things that may not yet have a well-known name.
+Institutional developments in Bitcoin and Ethereum, including ETF flows,
+regulatory clarity progress, protocol upgrades like staking and layer 2 scaling,
+corporate treasury adoption, and macro analysis of crypto as an asset class.
+Focus on research from established crypto institutions, regulatory filings,
+and fundamental on-chain metrics.
 ```
 
 ### 條件參數
-- `min_faves:100`（互動門檻）
-- `-filter:replies`（排除類型，可選：replies / images / videos / news / links）
+- `min_faves:80`（互動門檻）
 - `lang:en OR lang:zh`（語言過濾）
 
-
-## 來源帳號限制
-請**優先**從以下帳號搜尋：`from:OpenAI OR from:AnthropicAI OR from:GoogleDeepMind`
-如果這些帳號近期無符合條件的推文，可擴大至一般搜尋。
 
 ## 內容篩選
 
 ### 優先收錄
-社群熱烈討論的新技術、令人意外的研究結果、尚無定論但引發廣泛關注的新發展
+機構研究報告、監管政策解讀、ETF 資金流向分析、協議基本面數據、企業採用案例、宏觀資產配置觀點
 
 ### 排除內容
-價格炒作、加密貨幣相關、無根據謠言、純粹的產品廣告
+散戶投機討論、無根據傳言、詐騙項目推廣、過度簡化的投資建議
 
 ## 輸出格式
 請以結構化 JSON 格式返回，每條推文包含以下欄位：
@@ -44,7 +41,7 @@ excited about — including things that may not yet have a well-known name.
 - url: 推文永久連結（格式：https://x.com/username/status/post_id）
 - engagement: {likes: 數量, retweets: 數量, replies: 數量}
 - media_urls: 推文中的圖片或影片連結陣列（無媒體則為空陣列 []）
-- relevance_note: 簡短說明為何符合此主題（1-2句）
+- relevance_note: 簡短說明為何符合此主題（1-2句，請說明與機構級加密資產的關聯性）
 
 ## 注意事項
 1. 請確保資訊準確，包含正確的推文連結

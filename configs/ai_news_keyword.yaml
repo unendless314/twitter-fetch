@@ -1,24 +1,24 @@
 # 主題識別碼（用於檔名、資料夾名）
-id: "ai_breakthrough"
+id: "ai_news_keyword"
 
 # 搜尋策略
 search:
   tool: "keyword"       # keyword (精準關鍵字) 或 semantic (語意描述)
   mode: "Latest"        # Top (熱門) 或 Latest (最新時間排序)
-  limit: 15             # 預期返回推文數量
+  limit: 10             # 預期返回推文數量
   lookback_days: 7      # 時間範圍：搜尋最近幾天（由 run.py 動態注入 since: 日期）
 
   # Keyword 模式：X 進階搜尋語法
   # Semantic 模式：自然語言描述你想找什麼
   query: |
     (artificial intelligence OR AI OR "machine learning")
-    (breakthrough OR release OR announced OR launched)
+    (breakthrough OR release OR announced OR launched OR benchmark)
     -crypto -blockchain -token -coin -nft
 
   # 過濾條件參數（獨立於查詢邏輯之外）
   conditions:
     min_faves: 100
-    filter: "-replies"    # 排除類型（加 -）：-replies | -images | -videos
+#      filter: "-replies"    # 排除類型（加 -）：-replies | -images | -videos
                            # 只限類型（不加 -）：images | videos | news | links
     lang: "en OR lang:zh" # 語言：en | zh | ja | ko（多語言用 OR 連接）
     # 可選：追蹤特定帳號的發文（留空或移除此欄位則不限定來源）

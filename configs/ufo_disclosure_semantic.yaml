@@ -1,0 +1,48 @@
+# 主題識別碼（用於檔名、資料夾名）
+id: "ufo_disclosure_semantic"
+
+# 搜尋策略
+search:
+  tool: "semantic"      # keyword (精準關鍵字) 或 semantic (語意描述)
+  mode: "Latest"        # Top (熱門) 或 Latest (最新時間排序）
+  limit: 10             # 預期返回推文數量
+  lookback_days: 7      # 語意搜尋時間範圍
+
+  # Semantic 模式：UFO/UAP 官方披露與調查進展
+  query: |
+    Government UFO/UAP disclosure developments, including Congressional hearings,
+    Pentagon reports, military whistleblower testimonies, declassified documents,
+    and official investigations into unidentified aerial phenomena.
+    Focus on credible sources such as government officials, military personnel,
+    investigative journalists, and academic researchers discussing disclosure
+    efforts and UAP evidence.
+
+  # 過濾條件參數
+  conditions:
+    min_faves: 60         # 語意搜尋門檻略高
+#      filter: "-replies"
+    lang: "en OR lang:zh"
+#    from_accounts:
+#      - LueElizondo
+#      - ChristopherKMellon
+#      - CoulthartMJ
+#      - RossCoulthart
+#      - jeremycorbell
+
+# 內容篩選說明
+filter:
+  include: "官方披露進展、軍事證人證詞、政府調查報告、解密文件分析、學術研究、主流媒體深度報導"
+  exclude: "純娛樂內容、無根據猜測、科幻創作"
+
+# 輸出格式要求
+output:
+  format: |
+    請以結構化 JSON 格式返回，每條推文包含以下欄位：
+    - author: 作者顯示名稱
+    - username: @用戶名（不含@）
+    - time: 發布時間（ISO 8601 格式，含時區，例如 2026-02-23T14:30:00Z）
+    - content: 推文完整內容（保留原始文字，包含連結）
+    - url: 推文永久連結（格式：https://x.com/username/status/post_id）
+    - engagement: {likes: 數量, retweets: 數量, replies: 數量}
+    - media_urls: 推文中的圖片或影片連結陣列（無媒體則為空陣列 []）
+    - relevance_note: 簡短說明為何符合此主題（1-2句，請說明與 UFO/Disclosure 主題的關聯性）

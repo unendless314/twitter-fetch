@@ -39,5 +39,3 @@ env/
 # Logs
 logs/*.log
 
-# Outputs
-outputs/

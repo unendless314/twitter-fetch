@@ -57,16 +57,16 @@ python3 prompt_factory.py --config new_topic --dry-run
 
 ```bash
 # 執行所有 prompts
-python3 run.py
+python3 fetch.py
 
 # 只執行特定主題
-python3 run.py --prompt ai_breakthrough
+python3 fetch.py --prompt ai_breakthrough
 
 # 多個主題
-python3 run.py --prompt ai_breakthrough,ai_emerging
+python3 fetch.py --prompt ai_breakthrough,ai_emerging
 
 # 預覽（不呼叫 API）
-python3 run.py --dry-run
+python3 fetch.py --dry-run
 ```
 
 ### Config 欄位參考
@@ -180,7 +180,7 @@ twitter-fetch/
 │   └── refined/           # Agent 分析結果
 ├── logs/                  # 執行日誌
 ├── prompt_factory.py      # config → prompt 生成工具
-├── run.py                 # Fetch 執行腳本
+├── fetch.py               # Fetch 執行腳本
 ├── analyze.py             # Agent 分析腳本
 └── requirements.txt
 ```

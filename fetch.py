@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-run.py
-掃描 prompts/ 目錄，呼叫 xAI Grok API，將結果存入 outputs/{topic_id}/{timestamp}.md。
+fetch.py
+Fetch Phase: 讀取 prompts/fetch/ 目錄，呼叫 xAI Grok API 進行 X Search。
 """
 
 import argparse
@@ -29,7 +29,7 @@ DEFAULT_LOOKBACK_DAYS = 7  # 若 config 未設定，預設抓最近 7 天
 def get_api_key() -> str:
     key = os.getenv("XAI_API_KEY")
     if not key:
-        print("[run.py] ❌ 未找到 XAI_API_KEY，請設定環境變數或建立 .env 檔案", file=sys.stderr)
+        print("[fetch.py] ❌ 未找到 XAI_API_KEY，請設定環境變數或建立 .env 檔案", file=sys.stderr)
         sys.exit(1)
     return key
 
@@ -57,12 +57,12 @@ def inject_date_range(prompt_content: str, lookback_days: int) -> str:
 def discover_prompts(selected: list[str] | None) -> list[Path]:
     """掃描 prompts/ 目錄，回傳可執行的 prompt 路徑列表。"""
     if not PROMPTS_DIR.exists():
-        print(f"[run.py] ❌ 找不到 prompts/ 目錄，請先執行 prompt_factory.py", file=sys.stderr)
+        print(f"[fetch.py] ❌ 找不到 prompts/fetch/ 目錄，請先執行 prompt_factory.py", file=sys.stderr)
         sys.exit(1)
 
     all_prompts = sorted(PROMPTS_DIR.glob("*.md"))
     if not all_prompts:
-        print("[run.py] ❌ prompts/ 目錄中沒有 .md 檔案", file=sys.stderr)
+        print("[fetch.py] ❌ prompts/fetch/ 目錄中沒有 .md 檔案", file=sys.stderr)
         sys.exit(1)
 
     if selected:
@@ -71,7 +71,7 @@ def discover_prompts(selected: list[str] | None) -> list[Path]:
         result = [p for p in all_prompts if p.stem in selected_set]
         missing = selected_set - {p.stem for p in result}
         if missing:
-            print(f"[run.py] ⚠️  找不到以下 prompt：{', '.join(sorted(missing))}", file=sys.stderr)
+            print(f"[fetch.py] ⚠️  找不到以下 prompt：{', '.join(sorted(missing))}", file=sys.stderr)
         return result
 
     return all_prompts
@@ -159,10 +159,10 @@ def main():
     prompt_paths = discover_prompts(selected)
     topic_ids = [p.stem for p in prompt_paths]
 
-    print(f"[run.py] 找到 {len(prompt_paths)} 個 prompts：{', '.join(topic_ids)}")
+    print(f"[fetch.py] 找到 {len(prompt_paths)} 個 prompts：{', '.join(topic_ids)}")
 
     if args.dry_run:
-        print("[run.py] [dry-run] 不實際呼叫 API，以下為預計執行內容：")
+        print("[fetch.py] [dry-run] 不實際呼叫 API，以下為預計執行內容：")
         for i, path in enumerate(prompt_paths, 1):
             print(f"  [{i}/{len(prompt_paths)}] {path.stem} → data/raw/{path.stem}/<timestamp>.md")
         return
@@ -191,7 +191,7 @@ def main():
             print(f"[{i}/{len(prompt_paths)}] ❌ 失敗（已記錄）→ {output_path}")
             fail_count += 1
 
-    print(f"[run.py] 全部完成。成功 {success_count} / 失敗 {fail_count}")
+    print(f"[fetch.py] 全部完成。成功 {success_count} / 失敗 {fail_count}")
 
 
 if __name__ == "__main__":

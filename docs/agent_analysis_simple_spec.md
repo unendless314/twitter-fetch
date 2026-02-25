@@ -8,7 +8,7 @@
 
 ```
 twitter-fetch/
-├── run.py                    # 現有：不動
+├── fetch.py                  # 現有：不動
 ├── prompt_factory.py         # 現有：不動
 ├── analyze.py                # 【新增】唯一的新檔案
 ├── configs/
@@ -30,7 +30,7 @@ twitter-fetch/
 
 ## 2. analyze.py 設計
 
-參考現有 `run.py` 的風格，保持簡單直接：
+參考現有 `fetch.py` 的風格，保持簡單直接：
 
 ```python
 #!/usr/bin/env python3
@@ -376,7 +376,7 @@ python analyze.py --agent deep_research_scout --topics ai_news_keyword --dry-run
 
 | 現有模組 | 關係 | 說明 |
 |---------|------|------|
-| `run.py` | 無關聯 | Fetch pipeline 獨立運作 |
+| `fetch.py` | 無關聯 | Fetch pipeline 獨立運作 |
 | `prompt_factory.py` | 無關聯 | 產生 fetch prompts |
 | `prompts/fetch/` | 輸入來源之一 | analyze.py 可讀取這些 topics |
 | `data/raw/` | 輸入來源 | analyze.py 讀取此處的資料 |

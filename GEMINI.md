@@ -13,7 +13,7 @@ This project is an automated pipeline for collecting Twitter/X data using xAI's 
 
 ## Project Structure
 
-- `run.py`: Executes the fetching phase using `xai-sdk`. Model: `grok-4-1-fast-reasoning`.
+- `fetch.py`: Executes the fetching phase using `xai-sdk`. Model: `grok-4-1-fast-reasoning`.
 - `analyze.py`: Executes the analysis phase using `gemini` or `qwen` CLIs.
 - `prompt_factory.py`: Generates Markdown prompts from YAML configurations.
 - `configs/`:
@@ -55,7 +55,7 @@ Ensure `gemini` and `qwen` CLI tools are installed and available in your PATH fo
 ### Phase 1: Fetching Data
 1. **Add/Edit Topic**: `configs/fetch/{topic_id}.yaml`
 2. **Generate Prompt**: `python3 prompt_factory.py --config <topic_id>`
-3. **Execute Fetch**: `python3 run.py --prompt <topic_id>`
+3. **Execute Fetch**: `python3 fetch.py --prompt <topic_id>`
 
 ### Phase 2: Analyzing Data
 ```bash

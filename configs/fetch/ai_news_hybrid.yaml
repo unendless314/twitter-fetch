@@ -6,7 +6,7 @@ search:
   tool: "hybrid"           # 混合模式：自然語言目標描述 + Keywords 檢索策略
   mode: "Latest"          # Top (熱門) 或 Latest (最新時間排序)
   limit: 10               # 預期返回推文數量
-  lookback_days: 5        # 時間範圍：搜尋最近幾天（由 run.py 動態注入 since: 日期）
+  lookback_days: 5        # 時間範圍：搜尋最近幾天（由 fetch.py 動態注入 since: 日期）
 
   # 自然語言目標描述 + Keywords 檢索策略的融合
   query: |

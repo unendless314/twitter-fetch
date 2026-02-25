@@ -53,7 +53,7 @@ cp .env.example .env
 
 ```
 twitter-fetch/
-├── run.py                    # Fetch phase entry point
+├── fetch.py                  # Fetch phase entry point
 ├── analyze.py                # Analysis phase entry point
 ├── prompt_factory.py         # Config → Prompt generator
 ├── entrypoint.sh             # Cron job entrypoint
@@ -135,7 +135,7 @@ See `docs/SEARCH_STRATEGY_ANALYSIS.md` for detailed comparison.
 
 ## Core Modules
 
-### 1. run.py - Fetch Pipeline
+### 1. fetch.py - Fetch Pipeline
 
 Executes Grok API calls to collect tweets.
 
@@ -147,14 +147,14 @@ Executes Grok API calls to collect tweets.
 **CLI Usage**:
 ```bash
 # Run all prompts
-python3 run.py
+python3 fetch.py
 
 # Run specific topic(s)
-python3 run.py --prompt ai_news_keyword
-python3 run.py --prompt ai_news_keyword,crypto_defi_native_keyword
+python3 fetch.py --prompt ai_news_keyword
+python3 fetch.py --prompt ai_news_keyword,crypto_defi_native_keyword
 
 # Dry run (preview only)
-python3 run.py --dry-run
+python3 fetch.py --dry-run
 ```
 
 **Dynamic Date Injection**:
@@ -252,7 +252,7 @@ default_models:
 1. Create config: `configs/fetch/my_topic.yaml`
 2. Generate prompt: `python3 prompt_factory.py --config my_topic`
 3. Review/edit: `vim prompts/fetch/my_topic.md` (if needed)
-4. Test run: `python3 run.py --prompt my_topic`
+4. Test run: `python3 fetch.py --prompt my_topic`
 
 ### Adding a New Agent
 
@@ -279,7 +279,7 @@ All scripts support `--dry-run` to preview without execution:
 
 ```bash
 python3 prompt_factory.py --config ai_news_keyword --dry-run
-python3 run.py --prompt ai_news_keyword --dry-run
+python3 fetch.py --prompt ai_news_keyword --dry-run
 python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
 ```
 
@@ -290,7 +290,7 @@ python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
 
 ### Validation
 
-- `run.py` validates XAI_API_KEY on startup
+- `fetch.py` validates XAI_API_KEY on startup
 - `analyze.py` validates agent.yaml config on startup
 - `prompt_factory.py` validates required config fields
 
@@ -323,7 +323,7 @@ python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
 
 ### Missing API Key
 
-**Error**: `[run.py] ❌ 未找到 XAI_API_KEY...`
+**Error**: `[fetch.py] ❌ 未找到 XAI_API_KEY...`
 **Fix**: Ensure `.env` file exists with valid XAI_API_KEY
 
 ### Missing Config

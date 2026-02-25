@@ -11,6 +11,6 @@ mkdir -p logs
 # 執行程式並紀錄輸出
 echo "==========================================" >> logs/cron.log
 echo "🚀 任務開始時間: $(date '+%Y-%m-%d %H:%M:%S')" >> logs/cron.log
-./.venv/bin/python3 run.py >> logs/cron.log 2>&1
+./.venv/bin/python3 fetch.py >> logs/cron.log 2>&1
 echo "✅ 任務結束時間: $(date '+%Y-%m-%d %H:%M:%S')" >> logs/cron.log
 echo "==========================================" >> logs/cron.log

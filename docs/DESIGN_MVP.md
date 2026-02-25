@@ -10,7 +10,7 @@
 
 ### Topic ID 規則
 - **Prompt 檔名即 topic_id**：`prompts/ai_breakthrough.md` → topic_id = `ai_breakthrough`
-- `run.py` 透過掃描 `prompts/` 目錄自動列出可執行的主題
+- `fetch.py` 透過掃描 `prompts/fetch/` 目錄自動列出可執行的主題
 - `outputs/{topic_id}/` 資料夾名稱直接對應 prompt 檔名（不含副檔名）
 
 ### 輸出策略
@@ -27,13 +27,13 @@
 - 執行時在終端機顯示簡單描述，讓使用者知道程式正在運作
 - 建議格式：
   ```
-  [run.py] 找到 2 個 prompts：ai_breakthrough, crypto_market
+  [fetch.py] 找到 2 個 prompts：ai_breakthrough, crypto_market
   [1/2] 執行 ai_breakthrough ...
   [1/2] ✅ 完成 → outputs/ai_breakthrough/20240115_083000.md
   [2/2] 執行 crypto_market ...
   [2/2] ❌ 失敗（retry 1/3）...
   [2/2] ✅ 完成（retry 2/3）→ outputs/crypto_market/20240115_083005.md
-  [run.py] 全部完成。成功 2 / 失敗 0
+  [fetch.py] 全部完成。成功 2 / 失敗 0
   ```
 - 使用 `print()` 即可，MVP 不需要 logging 框架
 
@@ -62,7 +62,7 @@ twitter-fetch/
 ├── logs/                    # 執行日誌
 │
 ├── prompt_factory.py        # 一次性工具：config → prompt
-├── run.py                   # 執行入口
+├── fetch.py                 # 執行入口
 ├── requirements.txt
 └── README.md
 ```
@@ -89,13 +89,13 @@ python prompt_factory.py --config ai_breakthrough
 
 ```bash
 # 執行所有 prompts（預設行為）
-python run.py
+python fetch.py
 
 # 只執行特定 prompt（debug/優化時使用）
-python run.py --prompt ai_breakthrough
+python fetch.py --prompt ai_breakthrough
 
 # 執行多個指定 prompts
-python run.py --prompt ai_breakthrough,crypto_market
+python fetch.py --prompt ai_breakthrough,crypto_market
 ```
 
 檔案命名：`outputs/{topic_id}/{YYYYMMDD}_{HHMMSS}.md`
@@ -214,7 +214,7 @@ lang:en OR lang:zh
 
 ---
 
-## run.py 設計
+## fetch.py 設計
 
 ### 功能
 
@@ -226,16 +226,16 @@ lang:en OR lang:zh
 
 ```bash
 # 執行所有 prompts（預設行為，生產環境使用）
-python run.py
+python fetch.py
 
 # 只執行特定 prompt（debug/優化時使用）
-python run.py --prompt ai_breakthrough
+python fetch.py --prompt ai_breakthrough
 
 # 執行多個指定 prompts
-python run.py --prompt ai_breakthrough,crypto_market
+python fetch.py --prompt ai_breakthrough,crypto_market
 
 # 預覽模式（顯示會做什麼，但不實際執行）
-python run.py --dry-run
+python fetch.py --dry-run
 ```
 
 ### 輸出格式範例
@@ -286,20 +286,20 @@ python prompt_factory.py --config new_topic
 vim prompts/new_topic.md
 
 # 4. 測試執行（使用相同 ID）
-python run.py --prompt new_topic
+python fetch.py --prompt new_topic
 ```
 
 ### 場景 2：日常收集
 
 ```bash
 # 收集所有 prompts（預設）
-python run.py
+python fetch.py
 
 # 只收集特定主題（debug/測試）
-python run.py --prompt ai_breakthrough
+python fetch.py --prompt ai_breakthrough
 
 # 收集多個指定主題
-python run.py --prompt ai_breakthrough,crypto_market
+python fetch.py --prompt ai_breakthrough,crypto_market
 ```
 
 ### 場景 3：高頻收集
@@ -308,10 +308,10 @@ python run.py --prompt ai_breakthrough,crypto_market
 
 ```bash
 # 早上收集一次
-python run.py
+python fetch.py
 
 # 下午再次收集（新時間戳，獨立檔案）
-python run.py
+python fetch.py
 
 # outputs/ai_breakthrough/ 目錄下會有：
 # - 20240115_083000.md
@@ -325,7 +325,7 @@ python run.py
 vim prompts/ai_breakthrough.md
 
 # 單獨執行測試（不影響其他 prompts）
-python run.py --prompt ai_breakthrough
+python fetch.py --prompt ai_breakthrough
 ```
 
 ---

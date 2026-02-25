@@ -17,9 +17,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-PROMPTS_DIR = Path("prompts")
-OUTPUTS_DIR = Path("outputs")
-CONFIGS_DIR = Path("configs")
+PROMPTS_DIR = Path("prompts/fetch")
+OUTPUTS_DIR = Path("data/raw")
+CONFIGS_DIR = Path("configs/fetch")
 MODEL = "grok-4-1-fast-reasoning"
 MAX_RETRIES = 3
 RETRY_DELAYS = [2, 4, 8]  # 指數退避等待秒數
@@ -164,7 +164,7 @@ def main():
     if args.dry_run:
         print("[run.py] [dry-run] 不實際呼叫 API，以下為預計執行內容：")
         for i, path in enumerate(prompt_paths, 1):
-            print(f"  [{i}/{len(prompt_paths)}] {path.stem} → outputs/{path.stem}/<timestamp>.md")
+            print(f"  [{i}/{len(prompt_paths)}] {path.stem} → data/raw/{path.stem}/<timestamp>.md")
         return
 
     api_key = get_api_key()

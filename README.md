@@ -1,6 +1,6 @@
 # twitter-fetch
 
-透過 xAI Grok 的 X Search 功能，自動收集 Twitter/X 上的推文。
+透過 xAI Grok 的 X Search 功能，自動收集 Twitter/X 上的推文，並透過 Agent 分析找出具備傳播潛力的內容。
 
 ## 安裝
 
@@ -27,7 +27,18 @@ source .venv/bin/activate
 
 啟用後，終端機提示符會變成 `(.venv) $`，之後就可以直接用 `python3` 執行所有指令。
 
-## 使用方式
+---
+
+## 功能概覽
+
+本專案分為兩個階段：
+
+1. **Fetch（資料收集）**：使用 Grok API 抓取 Twitter 資料
+2. **Analyze（Agent 分析）**：使用免費 LLM CLI（Gemini/Qwen）分析推文並找出流量催化劑
+
+---
+
+## 第一階段：Fetch 資料收集
 
 ### 新增主題
 
@@ -58,21 +69,7 @@ python3 run.py --prompt ai_breakthrough,ai_emerging
 python3 run.py --dry-run
 ```
 
-## 專案結構
-
-```
-twitter-fetch/
-├── .venv/            # Python 虛擬環境（依賴套件）
-├── configs/          # 主題配置（YAML）
-├── prompts/          # 生成的搜尋 prompt（Markdown）
-├── outputs/          # 收集結果（依主題分資料夾，含時間戳）
-├── logs/             # 執行日誌
-├── prompt_factory.py # config → prompt 生成工具
-├── run.py            # 主執行腳本
-└── requirements.txt
-```
-
-## Config 欄位參考
+### Config 欄位參考
 
 ```yaml
 search:
@@ -91,9 +88,9 @@ search:
       - OpenAI
 ```
 
-## 輸出格式
+### 輸出格式
 
-每次執行產生 `outputs/{topic_id}/{YYYYMMDD_HHMMSS}.md`，包含：
+每次執行產生 `data/raw/{topic_id}/{YYYYMMDD_HHMMSS}.md`，包含：
 
 ```markdown
 ---
@@ -103,4 +100,87 @@ status: "success"
 ---
 
 （Grok 原始回應內容）
+```
+
+---
+
+## 第二階段：Agent 分析
+
+使用免費 LLM CLI（Gemini 或 Qwen）分析已收集的推文，識別具備高傳播潛力的內容。
+
+### 設定 Agent 配置
+
+編輯 `configs/agent.yaml`：
+
+```yaml
+default_provider: "qwen"  # 或 "gemini"
+default_models:
+  qwen: "qwen-coder"      # Qwen 模型名稱
+  gemini: "gemini-2.5-pro" # Gemini 模型名稱
+```
+
+**注意**：必須先設定此配置才能執行分析。
+
+### 執行分析
+
+```bash
+# 分析單一主題
+python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword
+
+# 分析多個主題（跨主題聚合）
+python3 analyze.py --agent traffic_catalyst --topics ai_news_hybrid,ai_news_keyword,ai_news_semantic
+
+# 預覽組裝後的 prompt（不呼叫 LLM）
+python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
+```
+
+### 現有 Agent
+
+| Agent | 用途 | Prompt 檔案 |
+|-------|------|-------------|
+| `traffic_catalyst` | 識別短期高傳播潛力內容 | `prompts/agent/traffic_catalyst_agent.md` |
+| `deep_research_scout` | 挖掘深度研究機會 | `prompts/agent/deep_research_scout_agent.md` |
+
+### 輸出結果
+
+分析結果儲存於 `data/refined/{agent_id}/{timestamp}_{topics}.md`：
+
+```markdown
+---
+agent: traffic_catalyst
+analyzed_at: "2026-02-26T00:24:11+08:00"
+provider: qwen
+model: qwen-coder
+sources: ai_news_hybrid, ai_news_keyword, ai_news_semantic
+---
+
+Rank: [1]
+Topic: ai_news_semantic
+Title: Stanford/Harvard: AI Agents 自發走向「混亂與欺騙」
+URL: https://x.com/alex_prompter/status/...
+Emotional Hook: 恐懼 & 警示
+...
+```
+
+---
+
+## 專案結構
+
+```
+twitter-fetch/
+├── .venv/                 # Python 虛擬環境
+├── configs/               # 配置檔（YAML）
+│   ├── fetch/             # Fetch 主題配置
+│   └── agent.yaml         # Agent 分析配置（必要）
+├── prompts/
+│   ├── fetch/             # 生成的搜尋 prompt
+│   └── agent/             # Agent 分析 prompt
+├── data/
+│   ├── raw/               # Fetch 收集的原始資料
+│   └── refined/           # Agent 分析結果
+├── logs/                  # 執行日誌
+├── prompt_factory.py      # config → prompt 生成工具
+├── run.py                 # Fetch 執行腳本
+├── analyze.py             # Agent 分析腳本
+└── requirements.txt
 ```

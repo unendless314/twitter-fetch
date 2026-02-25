@@ -1,258 +1,353 @@
-# Twitter Fetch - AI Coding Agent Guide
+# AGENTS.md - Twitter Fetch Project Guide
+
+> This file provides essential information for AI coding agents working on this project.
+> For human contributors, see README.md.
+
+---
 
 ## Project Overview
 
-This is a Python-based automation tool that collects tweets from Twitter/X using xAI Grok's X Search capabilities. It allows users to define search topics via YAML configurations, generate optimized prompts, and execute automated data collection through the xAI API.
+**Twitter Fetch** is a two-phase data pipeline for collecting and analyzing Twitter/X content:
 
-The project is designed with simplicity in mind - it follows a config → prompt → output workflow where each topic is independently configurable and results are stored with timestamps to preserve history.
+1. **Fetch Phase**: Uses xAI Grok API with X Search capability to collect tweets based on configured topics
+2. **Analyze Phase**: Uses free LLM CLI tools (Gemini/Qwen) to analyze collected content and identify high-engagement opportunities
+
+The project is designed with a "simple, practical, no over-engineering" philosophy. All configurations are YAML-based, outputs are Markdown with YAML frontmatter, and the codebase is minimal (~500 lines total).
+
+### Language
+
+Project documentation, code comments, and variable names use **Traditional Chinese (zh-TW)** as the primary language.
+
+---
 
 ## Technology Stack
 
-- **Language**: Python 3.12+
-- **Core Dependencies**:
-  - `xai-sdk` - Official xAI SDK for Grok API access
-  - `pyyaml` - YAML configuration parsing
+- **Runtime**: Python 3.12+
+- **Dependencies** (see `requirements.txt`):
+  - `xai-sdk` - xAI Grok API client
+  - `pyyaml` - YAML parsing
   - `python-dotenv` - Environment variable management
-- **Model**: `grok-4-1-fast-reasoning` (as defined in run.py)
-- **API**: xAI Grok API with X Search tool
-
-## Project Structure
-
-```
-twitter-fetch/
-├── configs/                 # Topic configuration files (YAML)
-│   ├── ai_breakthrough.yaml # Example: AI breakthrough tracking
-│   └── ai_emerging.yaml     # Example: Emerging AI trends
-├── prompts/                 # Generated prompt files (Markdown)
-│   ├── ai_breakthrough.md
-│   └── ai_emerging.md
-├── outputs/                 # Collection results organized by topic
-│   ├── ai_breakthrough/     # Timestamped result files
-│   └── ai_emerging/
-├── logs/                    # Execution logs (currently unused)
-├── docs/                    # Documentation and research notes
-│   ├── DESIGN_MVP.md        # MVP design decisions
-│   ├── GROK_X_SEARCH_CAPABILITIES.md  # Grok search capabilities
-│   └── XAI_OFFICIAL_API_DOC.md        # API documentation notes
-├── prompt_factory.py        # Config → Prompt generator tool
-├── run.py                   # Main execution script
-├── requirements.txt         # Python dependencies
-├── .env.example            # Environment variable template
-└── .gitignore              # Git ignore rules
-```
-
-## Configuration System
-
-### Config File Format (configs/{topic_id}.yaml)
-
-Each topic is defined by a YAML configuration with the following structure:
-
-```yaml
-# Required: Topic identifier (used for filenames and folders)
-id: "topic_name"
-
-# Required: Search strategy configuration
-search:
-  tool: "keyword"           # "keyword" (precise) or "semantic" (AI understanding)
-  mode: "Latest"            # "Top" (popular) or "Latest" (chronological)
-  limit: 15                 # Number of tweets to retrieve
-  lookback_days: 7          # Search window (injected as since: date)
-  
-  query: |                  # Search query
-    (artificial intelligence OR AI)
-    (breakthrough OR release)
-  
-  conditions:               # Optional filtering conditions
-    min_faves: 100          # Minimum likes threshold
-    filter: "-replies"      # Exclude types (-replies, -images, -videos)
-                            # Or include only: images, videos, news, links
-    lang: "en OR lang:zh"   # Language filter
-    from_accounts:          # Optional: limit to specific accounts
-      - OpenAI
-      - AnthropicAI
-
-# Required: Content filtering instructions
-filter:
-  include: "What to prioritize"
-  exclude: "What to avoid"
-
-# Required: Output format specification
-output:
-  format: "Detailed output format instructions for Grok"
-```
-
-## Build and Run Commands
+- **External CLI Tools** (must be installed separately):
+  - `gemini` - Google Gemini CLI
+  - `qwen` - Alibaba Qwen CLI
+- **Virtual Environment**: `.venv/` (required for execution)
 
 ### Environment Setup
 
 ```bash
 # Create virtual environment
 python3 -m venv .venv
-
-# Activate virtual environment (required for every new terminal)
 source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Set up environment variables
+# Configure API key
 cp .env.example .env
-# Edit .env and add your XAI_API_KEY
+# Edit .env and set XAI_API_KEY
 ```
 
-### Generate Prompts from Configs
+---
 
-```bash
-# Generate prompt from config (configs/{name}.yaml → prompts/{name}.md)
-python3 prompt_factory.py --config topic_name
+## Project Structure
 
-# Preview without writing to file
-python3 prompt_factory.py --config topic_name --dry-run
-
-# Custom output path
-python3 prompt_factory.py --config ./custom.yaml --output ./custom.md
+```
+twitter-fetch/
+├── run.py                    # Fetch phase entry point
+├── analyze.py                # Analysis phase entry point
+├── prompt_factory.py         # Config → Prompt generator
+├── entrypoint.sh             # Cron job entrypoint
+├── requirements.txt          # Python dependencies
+├── .env                      # Environment variables (gitignored)
+│
+├── configs/
+│   ├── fetch/                # Fetch topic configurations
+│   │   ├── ai_news_keyword.yaml
+│   │   ├── ai_news_semantic.yaml
+│   │   ├── crypto_*.yaml
+│   │   └── ...
+│   └── agent.yaml            # Agent analysis configuration
+│
+├── prompts/
+│   ├── fetch/                # Generated search prompts (from configs)
+│   │   ├── ai_news_keyword.md
+│   │   └── ...
+│   └── agent/                # Agent analysis prompt templates
+│       ├── traffic_catalyst_agent.md
+│       └── deep_research_scout_agent.md
+│
+├── data/
+│   ├── raw/                  # Fetch output: raw tweet data
+│   │   ├── ai_news_keyword/
+│   │   │   ├── 20260225_070042.md
+│   │   │   └── ...
+│   │   └── ...
+│   └── refined/              # Analyze output: analysis results
+│       └── traffic_catalyst/
+│           └── 20260226_002022_ai_news_keyword.md
+│
+├── logs/                     # Execution logs
+├── temp/                     # Temporary files (debug prompts)
+└── docs/                     # Design documentation
 ```
 
-### Execute Data Collection
+---
 
+## Key Concepts & Conventions
+
+### Topic ID Convention
+
+- **Topic ID** = filename without extension
+- `configs/fetch/ai_news_keyword.yaml` → topic_id = `ai_news_keyword`
+- Prompt files, output directories all use the same topic_id
+
+### Timestamp Format
+
+- All timestamps use format: `YYYYMMDD_HHMMSS`
+- Timezone: `Asia/Taipei` (UTC+8)
+- Example: `20260225_070042` = Feb 25, 2026, 07:00:42
+
+### Output File Format
+
+All output files are Markdown with YAML frontmatter:
+
+```markdown
+---
+topic: "ai_news_keyword"
+executed_at: "2026-02-25T07:00:42+08:00"
+status: "success"
+---
+
+[Content body...]
+```
+
+### Search Strategies
+
+Three search strategies are supported in configs:
+
+1. **keyword** - X Advanced Search operators (recommended, most reliable)
+2. **semantic** - Natural language description
+3. **hybrid** - Combination of both
+
+See `docs/SEARCH_STRATEGY_ANALYSIS.md` for detailed comparison.
+
+---
+
+## Core Modules
+
+### 1. run.py - Fetch Pipeline
+
+Executes Grok API calls to collect tweets.
+
+**Key Configuration** (in file):
+- `MODEL = "grok-4-1-fast-reasoning"` - Grok model
+- `MAX_RETRIES = 3` - API retry limit
+- `RETRY_DELAYS = [2, 4, 8]` - Exponential backoff
+
+**CLI Usage**:
 ```bash
 # Run all prompts
 python3 run.py
 
 # Run specific topic(s)
-python3 run.py --prompt ai_breakthrough
-python3 run.py --prompt ai_breakthrough,ai_emerging
+python3 run.py --prompt ai_news_keyword
+python3 run.py --prompt ai_news_keyword,crypto_defi_native_keyword
 
-# Dry run (preview without API calls)
+# Dry run (preview only)
 python3 run.py --dry-run
 ```
 
-## Output Format
+**Dynamic Date Injection**:
+The script reads `lookback_days` from config and injects `since:{date}` at runtime.
 
-Results are saved to `outputs/{topic_id}/{YYYYMMDD_HHMMSS}.md` with YAML frontmatter:
+### 2. analyze.py - Analysis Pipeline
 
-```markdown
+Analyzes collected data using LLM CLI tools.
+
+**CLI Usage**:
+```bash
+# Basic usage
+python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword
+
+# Multiple topics (cross-topic aggregation)
+python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword,ai_news_semantic
+
+# Dry run (preview assembled prompt)
+python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
+```
+
+**Provider Support**:
+- `gemini` - Google Gemini CLI
+- `qwen` - Alibaba Qwen CLI
+
+### 3. prompt_factory.py - Config to Prompt Generator
+
+Converts YAML configs to Markdown prompts.
+
+**CLI Usage**:
+```bash
+# Generate from config ID
+python3 prompt_factory.py --config ai_news_keyword
+
+# Dry run (preview only)
+python3 prompt_factory.py --config ai_news_keyword --dry-run
+
+# Custom output path
+python3 prompt_factory.py --config ai_news_keyword --output custom/path.md
+```
+
 ---
-topic: "ai_breakthrough"
-executed_at: "2026-02-23T22:31:24+08:00"
-status: "success"  # or "failed"
+
+## Configuration Schema
+
+### Fetch Config (`configs/fetch/{topic_id}.yaml`)
+
+```yaml
+id: "ai_news_keyword"           # Topic identifier
+
+search:
+  tool: "keyword"               # keyword | semantic | hybrid
+  mode: "Latest"                # Latest | Top
+  limit: 10                     # Number of tweets to fetch
+  lookback_days: 5              # Search window (injected as since: date)
+  
+  query: |                      # Search query
+    (artificial intelligence OR AI)
+    (breakthrough OR release)
+  
+  conditions:                   # Filtering conditions
+    min_faves: 100              # Minimum likes
+    filter: "-replies"          # Exclude: -replies | -images | -videos
+                                # Include: images | videos | news | links
+    lang: "en OR lang:zh"       # Language filter
+    from_accounts:              # Optional: limit to specific accounts
+      - OpenAI
+      - AnthropicAI
+
+filter:
+  include: "官方公告、技術論文..."  # Content to prioritize
+  exclude: "價格炒作、加密貨幣..."    # Content to exclude
+
+output:
+  format: |                     # Expected output format (shown to Grok)
+    請以結構化 JSON 格式返回...
+```
+
+### Agent Config (`configs/agent.yaml`)
+
+```yaml
+default_provider: "qwen"        # Default LLM provider
+
+default_models:
+  gemini: "gemini-2.5-pro"      # Gemini model name
+  qwen: "qwen-coder"            # Qwen model name
+```
+
 ---
 
-(Grok's raw response content)
-```
-
-## Code Organization
-
-### Main Modules
-
-1. **prompt_factory.py**: Configuration-to-prompt converter
-   - Validates required config fields: `id`, `search`, `filter`, `output`
-   - Generates structured Markdown prompts for Grok
-   - Supports keyword and semantic search modes
-
-2. **run.py**: Main execution engine
-   - Discovers prompts from `prompts/` directory
-   - Calls xAI API with retry logic (exponential backoff)
-   - Injects dynamic date ranges based on `lookback_days`
-   - Writes timestamped output files
-
-### Key Constants (in run.py)
-
-```python
-MODEL = "grok-4-1-fast-reasoning"
-MAX_RETRIES = 3
-RETRY_DELAYS = [2, 4, 8]  # Exponential backoff in seconds
-DEFAULT_LOOKBACK_DAYS = 7
-TIMEZONE = "Asia/Taipei"
-```
-
-## Testing Strategy
-
-This project follows a **minimal testing approach** by design (MVP philosophy):
-
-- No formal unit tests
-- Validation through dry-run modes:
-  - `prompt_factory.py --dry-run`: Preview generated prompts
-  - `run.py --dry-run`: Preview execution plan
-- Manual testing via single topic execution: `python3 run.py --prompt topic_name`
-
-## Error Handling and Retry Logic
-
-The API caller implements exponential backoff:
-- Maximum 3 retry attempts
-- Delays: 2s → 4s → 8s between retries
-- Failed requests are logged with `status: failed` in output frontmatter
-- Execution continues to next prompt on failure (does not stop entire batch)
-
-## Development Conventions
-
-### Code Style
-
-- Use type hints where practical (`-> str`, `-> list[Path]`, etc.)
-- Prefer pathlib `Path` over string manipulation for file paths
-- Use f-strings for string formatting
-- Print statements for CLI feedback (no logging framework in MVP)
-- Comments in Traditional Chinese (project convention)
-
-### File Naming
-
-- Configs: `configs/{topic_id}.yaml`
-- Prompts: `prompts/{topic_id}.md`
-- Outputs: `outputs/{topic_id}/{YYYYMMDD_HHMMSS}.md`
-- Topic IDs should use snake_case (lowercase with underscores)
-
-### Time Handling
-
-- All timestamps use Asia/Taipei timezone
-- Output filenames use local time format: `YYYYMMDD_HHMMSS`
-- ISO 8601 format with timezone in frontmatter
-
-## Security Considerations
-
-### API Key Management
-
-- API key stored in `.env` file (gitignored)
-- `.env.example` provides template without actual values
-- Key loaded via `python-dotenv` at runtime
-- No hardcoded credentials in source code
-
-### Sensitive Files (Gitignored)
-
-```
-.env                    # API credentials
-.venv/                  # Virtual environment
-__pycache__/            # Python bytecode
-outputs/                # Generated content
-logs/*.log              # Log files
-```
-
-## Extending the Project
+## Development Workflow
 
 ### Adding a New Topic
 
-1. Create config: `configs/new_topic.yaml`
-2. Generate prompt: `python3 prompt_factory.py --config new_topic`
-3. Review/edit: `prompts/new_topic.md`
-4. Test: `python3 run.py --prompt new_topic`
-5. Run in production: `python3 run.py`
+1. Create config: `configs/fetch/my_topic.yaml`
+2. Generate prompt: `python3 prompt_factory.py --config my_topic`
+3. Review/edit: `vim prompts/fetch/my_topic.md` (if needed)
+4. Test run: `python3 run.py --prompt my_topic`
 
-### Modifying Search Behavior
+### Adding a New Agent
 
-- Edit configs in `configs/` directory
-- Re-run `prompt_factory.py` to regenerate prompts
-- Or directly edit prompts in `prompts/` directory for quick iteration
+1. Create prompt template: `prompts/agent/my_agent.md`
+2. Test: `python3 analyze.py --agent my_agent --topics ai_news_keyword --dry-run`
+3. Execute: `python3 analyze.py --agent my_agent --topics ai_news_keyword`
 
-## Documentation References
+### Cron/Scheduled Execution
 
-- `docs/DESIGN_MVP.md` - Original MVP design decisions and rationale
-- `docs/GROK_X_SEARCH_CAPABILITIES.md` - Research on Grok's search capabilities
-- `docs/XAI_OFFICIAL_API_DOC.md` - Notes on official xAI API documentation
+Use `entrypoint.sh` for scheduled execution:
 
-## Important Notes for AI Agents
+```bash
+# Add to crontab for daily execution at 7:00 AM
+0 7 * * * /home/openclaw/Projects/twitter-fetch/entrypoint.sh
+```
 
-1. **Always activate virtual environment** before running commands: `source .venv/bin/activate`
-2. **Config changes require prompt regeneration** unless editing `.md` files directly
-3. **API calls cost tokens** - use `--dry-run` to test without charges
-4. **Output files are never overwritten** - each run creates new timestamped files
-5. **The project is in Traditional Chinese** - maintain this for comments and documentation
-6. **No formal test suite** - verify functionality through dry-runs and selective execution
+---
+
+## Testing & Debugging
+
+### Dry Run Mode
+
+All scripts support `--dry-run` to preview without execution:
+
+```bash
+python3 prompt_factory.py --config ai_news_keyword --dry-run
+python3 run.py --prompt ai_news_keyword --dry-run
+python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
+```
+
+### Debug Files
+
+- `temp/analyze/` - Assembled prompts for analysis (with timestamps)
+- `logs/cron.log` - Cron execution logs
+
+### Validation
+
+- `run.py` validates XAI_API_KEY on startup
+- `analyze.py` validates agent.yaml config on startup
+- `prompt_factory.py` validates required config fields
+
+---
+
+## Security Considerations
+
+1. **API Keys**: Store in `.env` file only (gitignored)
+   - XAI_API_KEY for Grok API
+   - No keys stored in code or configs
+
+2. **Output Data**: 
+   - Raw tweet data may contain PII
+   - Data stored in `data/` directory (not gitignored by default)
+   - Consider adding `data/` to `.gitignore` for privacy
+
+3. **External CLI Tools**:
+   - Gemini/Qwen CLI must be installed separately
+   - These tools may send data to external APIs
+   - Review their privacy policies for sensitive content
+
+---
+
+## Common Issues
+
+### Missing Virtual Environment
+
+**Error**: `ModuleNotFoundError: No module named 'xai_sdk'`
+**Fix**: Run `source .venv/bin/activate` before executing scripts
+
+### Missing API Key
+
+**Error**: `[run.py] ❌ 未找到 XAI_API_KEY...`
+**Fix**: Ensure `.env` file exists with valid XAI_API_KEY
+
+### Missing Config
+
+**Error**: `[analyze.py] ❌ 找不到配置檔：configs/agent.yaml`
+**Fix**: Create `configs/agent.yaml` with required fields
+
+---
+
+## File Organization Rules
+
+When modifying code, maintain these organizational principles:
+
+1. **One topic = one config + one prompt** - Keep IDs consistent
+2. **Timestamps in filenames** - Never overwrite existing data
+3. **YAML frontmatter** - All outputs must have metadata headers
+4. **Chinese comments** - Code comments should be in Traditional Chinese
+5. **Simple error handling** - Use `print()` + `sys.exit(1)` for fatal errors
+
+---
+
+## Reference Documentation
+
+- `README.md` - User-facing documentation (in Chinese)
+- `docs/DESIGN_MVP.md` - Original MVP design decisions
+- `docs/SEARCH_STRATEGY_ANALYSIS.md` - Search strategy comparison
+- `docs/agent_analysis_simple_spec.md` - Analysis pipeline design spec

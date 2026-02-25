@@ -11,8 +11,8 @@ from pathlib import Path
 import yaml
 
 
-CONFIGS_DIR = Path("configs")
-PROMPTS_DIR = Path("prompts")
+CONFIGS_DIR = Path("configs/fetch")
+PROMPTS_DIR = Path("prompts/fetch")
 
 TOOL_NAMES = {
     "keyword": "Keyword Search",

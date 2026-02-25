@@ -1,73 +1,73 @@
-# GEMINI.md - Twitter Fetch Project Context
+# Twitter Fetch & Analyze
 
-This file provides the necessary context for Gemini to understand and work with the `twitter-fetch` project.
+This project is an automated pipeline for collecting Twitter/X data using xAI's Grok (X Search) and analyzing it for high-impact content using Gemini or Qwen agents.
 
 ## Project Overview
 
-`twitter-fetch` is a Python-based automation tool that leverages the **xAI Grok API** (specifically the **X Search tool**) to collect tweets from X (Twitter). It follows a structured workflow: **Config (YAML) → Prompt (Markdown) → Output (Markdown)**.
-
-- **Purpose**: Automate the collection of niche-specific tweets (e.g., AI news, Crypto trends) with high precision using Grok's reasoning and search capabilities.
-- **Main Technologies**: Python 3.12+, `xai-sdk`, `pyyaml`, `python-dotenv`.
-- **Primary Model**: `grok-4-1-fast-reasoning`.
-- **Timezone**: `Asia/Taipei`.
+- **Purpose**: Automate the discovery of trending or high-potential content on Twitter/X across various domains (AI, Crypto, Macro, etc.).
+- **Philosophy**: Simple, practical, no over-engineering. YAML-based configuration and Markdown-based outputs.
+- **Primary Language**: Documentation and code comments use **Traditional Chinese (zh-TW)**.
+- **Architecture**: 
+  - **Phase 1 (Fetch)**: Uses YAML configurations to generate prompts for xAI Grok, executes search, and stores raw data.
+  - **Phase 2 (Analyze)**: Aggregates raw data and uses LLM agents (via Gemini/Qwen CLI) to identify "traffic catalysts".
 
 ## Project Structure
 
-- `configs/`: YAML files defining search topics, queries, filters, and output formats.
-- `prompts/`: Markdown prompts generated from configs (or manually refined).
-- `outputs/`: API responses organized by `topic_id`, stored in timestamped `.md` files.
-- `logs/`: Execution logs (standard output is also used for progress).
-- `docs/`: Design documents and API research.
-- `prompt_factory.py`: Utility to convert `configs/*.yaml` to `prompts/*.md`.
-- `run.py`: Main script to execute prompts and save results.
+- `run.py`: Executes the fetching phase using `xai-sdk`. Model: `grok-4-1-fast-reasoning`.
+- `analyze.py`: Executes the analysis phase using `gemini` or `qwen` CLIs.
+- `prompt_factory.py`: Generates Markdown prompts from YAML configurations.
+- `configs/`:
+  - `fetch/`: YAML files defining search queries. Filename is the **Topic ID**.
+  - `agent.yaml`: Analysis configuration (provider/model selection).
+- `data/`:
+  - `raw/{topic_id}/`: Raw responses from Grok.
+  - `refined/{agent_id}/`: Final analysis results.
+- `prompts/`:
+  - `fetch/`: Generated search prompts.
+  - `agent/`: Prompt templates for agents.
 
-## Building and Running
+## Key Conventions
 
-### Prerequisites
-- Python 3.12+
-- xAI API Key (configured in `.env`)
+- **Topic ID**: Filename without extension (e.g., `ai_news_keyword`). Used consistently across configs, prompts, and data dirs.
+- **Timestamp Format**: `YYYYMMDD_HHMMSS` (Timezone: `Asia/Taipei`).
+- **Output Format**: Markdown with YAML frontmatter.
 
-### Commands
-- **Environment Setup**:
-  ```bash
-  python3 -m venv .venv
-  source .venv/bin/activate
-  pip install -r requirements.txt
-  cp .env.example .env # Then edit .env
-  ```
-- **Generate Prompts**:
-  ```bash
-  # Generate from configs/ai_news.yaml to prompts/ai_news.md
-  python3 prompt_factory.py --config ai_news
-  ```
-- **Run Collection**:
-  ```bash
-  # Run all prompts in prompts/
-  python3 run.py
-  
-  # Run specific topic
-  python3 run.py --prompt ai_news
-  
-  # Preview without API calls
-  python3 run.py --dry-run
-  ```
+## Setup and Installation
 
-## Development Conventions
+### 1. Environment Setup
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-- **Topic IDs**: Use `snake_case` (e.g., `crypto_defi_native`).
-- **File Naming**:
-  - Config: `configs/{topic_id}.yaml`
-  - Prompt: `prompts/{topic_id}.md`
-  - Output: `outputs/{topic_id}/{YYYYMMDD_HHMMSS}.md`
-- **Coding Style**:
-  - Use `pathlib.Path` for file system operations.
-  - Use type hints for function signatures.
-  - Traditional Chinese is used for comments and documentation (maintain this consistency).
-- **Error Handling**: `run.py` implements exponential backoff retries (3 attempts).
-- **Dynamic Prompts**: `run.py` automatically injects a `since:YYYY-MM-DD` filter into the prompt based on the `lookback_days` specified in the config.
+### 2. Configuration
+```bash
+cp .env.example .env
+# Edit .env and add XAI_API_KEY
+```
 
-## Adding a New Topic
-1. Create `configs/my_topic.yaml`.
-2. Run `python3 prompt_factory.py --config my_topic`.
-3. (Optional) Refine `prompts/my_topic.md`.
-4. Run `python3 run.py --prompt my_topic`.
+### 3. External Tools
+Ensure `gemini` and `qwen` CLI tools are installed and available in your PATH for the analysis phase.
+
+## Usage
+
+### Phase 1: Fetching Data
+1. **Add/Edit Topic**: `configs/fetch/{topic_id}.yaml`
+2. **Generate Prompt**: `python3 prompt_factory.py --config <topic_id>`
+3. **Execute Fetch**: `python3 run.py --prompt <topic_id>`
+
+### Phase 2: Analyzing Data
+```bash
+python3 analyze.py --agent traffic_catalyst --topics <topic_id1>,<topic_id2>
+```
+
+## Development Workflow
+
+- **Dry Run**: All main scripts support `--dry-run` to preview actions without making API calls or writing results.
+- **Adding Agents**: Create a new template in `prompts/agent/{agent_id}_agent.md`.
+- **Scheduled Tasks**: Use `entrypoint.sh` for cron jobs.
+
+## Testing & Validation
+- Use `--dry-run` for all scripts to validate prompt assembly and configuration.
+- Check `temp/analyze/` for debug prompts generated during the analysis phase.

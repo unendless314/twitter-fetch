@@ -56,7 +56,10 @@ twitter-fetch/
 ├── fetch.py                  # Fetch phase entry point
 ├── analyze.py                # Analysis phase entry point
 ├── prompt_factory.py         # Config → Prompt generator
-├── entrypoint.sh             # Cron job entrypoint
+├── manifest_generator.py     # Aggregate agent outputs into manifest
+├── cron_fetch.sh             # Cron job for fetch phase
+├── cron_analyze.sh           # Cron job for analyze phase (multi-agent)
+├── cron_manifest_generator.sh # Cron job for manifest generation
 ├── requirements.txt          # Python dependencies
 ├── .env                      # Environment variables (gitignored)
 │
@@ -82,9 +85,14 @@ twitter-fetch/
 │   │   │   ├── 20260225_070042.md
 │   │   │   └── ...
 │   │   └── ...
-│   └── refined/              # Analyze output: analysis results
-│       └── traffic_catalyst/
-│           └── 20260226_002022_ai_news_keyword.md
+│   ├── refined/              # Analyze output: analysis results
+│   │   ├── traffic_catalyst/
+│   │   │   └── 20260226_002022_ai_news_keyword.md
+│   │   └── deep_research_scout/
+│   │       └── 20260226_161435_ai_news_hybrid_...md
+│   └── manifest/             # Aggregated manifest for human reading
+│       ├── traffic_catalyst_20260226.md
+│       └── deep_research_scout_20260226.md
 │
 ├── logs/                     # Execution logs
 ├── temp/                     # Temporary files (debug prompts)
@@ -177,8 +185,13 @@ python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
 ```
 
 **Provider Support**:
-- `gemini` - Google Gemini CLI
+- `gemini` - Google Gemini CLI (recommended, more stable)
 - `qwen` - Alibaba Qwen CLI
+
+**Multi-Agent Support**:
+`cron_analyze.sh` supports multiple agents running sequentially:
+- `traffic_catalyst` - Identifies viral content opportunities
+- `deep_research_scout` - Identifies deep research opportunities
 
 ### 3. prompt_factory.py - Config to Prompt Generator
 
@@ -195,6 +208,27 @@ python3 prompt_factory.py --config ai_news_keyword --dry-run
 # Custom output path
 python3 prompt_factory.py --config ai_news_keyword --output custom/path.md
 ```
+
+### 4. manifest_generator.py - Manifest Generator
+
+Aggregates agent outputs into a single human-readable Markdown manifest.
+
+**Purpose**: Combine multiple daily analysis results into one file for easy reading.
+
+**CLI Usage**:
+```bash
+# Generate manifest for today (save to file)
+python3 manifest_generator.py --agent traffic_catalyst --date today
+python3 manifest_generator.py --agent deep_research_scout --date today
+
+# Preview output (stdout only)
+python3 manifest_generator.py --agent traffic_catalyst --date today --output stdout
+
+# Generate for specific date
+python3 manifest_generator.py --agent deep_research_scout --date 20260226
+```
+
+**Output Location**: `data/manifest/{agent_id}_{YYYYMMDD}.md`
 
 ---
 
@@ -262,11 +296,16 @@ default_models:
 
 ### Cron/Scheduled Execution
 
-Use `entrypoint.sh` for scheduled execution:
+Use `cron_fetch.sh`, `cron_analyze.sh`, and `cron_manifest_generator.sh` for scheduled execution:
 
 ```bash
-# Add to crontab for daily execution at 7:00 AM
-0 7 * * * /home/openclaw/Projects/twitter-fetch/entrypoint.sh
+# Add to crontab for daily execution
+# 5:00 AM - Fetch data (15 topics)
+0 5 * * * /home/openclaw/Projects/twitter-fetch/cron_fetch.sh
+# 6:00 AM - Analyze data (2 agents x 5 topic groups = 10 API calls)
+0 6 * * * /home/openclaw/Projects/twitter-fetch/cron_analyze.sh
+# 7:00 AM - Generate manifests (aggregate outputs for human reading)
+0 7 * * * /home/openclaw/Projects/twitter-fetch/cron_manifest_generator.sh
 ```
 
 ---

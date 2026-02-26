@@ -16,12 +16,14 @@ This project is an automated pipeline for collecting Twitter/X data using xAI's 
 - `fetch.py`: Executes the fetching phase using `xai-sdk`. Model: `grok-4-1-fast-reasoning`.
 - `analyze.py`: Executes the analysis phase using `gemini` or `qwen` CLIs.
 - `prompt_factory.py`: Generates Markdown prompts from YAML configurations.
+- `manifest_generator.py`: Aggregates agent outputs into single Markdown manifests.
 - `configs/`:
   - `fetch/`: YAML files defining search queries. Filename is the **Topic ID**.
   - `agent.yaml`: Analysis configuration (provider/model selection).
 - `data/`:
   - `raw/{topic_id}/`: Raw responses from Grok.
   - `refined/{agent_id}/`: Final analysis results.
+  - `manifest/`: Aggregated daily manifests for human reading.
 - `prompts/`:
   - `fetch/`: Generated search prompts.
   - `agent/`: Prompt templates for agents.
@@ -66,7 +68,7 @@ python3 analyze.py --agent traffic_catalyst --topics <topic_id1>,<topic_id2>
 
 - **Dry Run**: All main scripts support `--dry-run` to preview actions without making API calls or writing results.
 - **Adding Agents**: Create a new template in `prompts/agent/{agent_id}_agent.md`.
-- **Scheduled Tasks**: Use `entrypoint.sh` for cron jobs.
+- **Scheduled Tasks**: Use `cron_fetch.sh`, `cron_analyze.sh`, and `cron_manifest_generator.sh` for cron jobs.
 
 ## Testing & Validation
 - Use `--dry-run` for all scripts to validate prompt assembly and configuration.

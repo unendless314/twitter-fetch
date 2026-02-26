@@ -1,5 +1,5 @@
 #!/bin/bash
-# Twitter Fetch Entrypoint Script
+# Twitter Fetch Cron Script
 # 確保腳本在專案根目錄下執行，以正確載入 .env 和 configs
 
 PROJECT_DIR="/home/openclaw/Projects/twitter-fetch"

@@ -149,17 +149,62 @@ python3 analyze.py --agent traffic_catalyst --topics ai_news_keyword --dry-run
 ---
 agent: traffic_catalyst
 analyzed_at: "2026-02-26T00:24:11+08:00"
-provider: qwen
-model: qwen-coder
+provider: gemini
+model: gemini-2.5-pro
 sources: ai_news_hybrid, ai_news_keyword, ai_news_semantic
 ---
 
 Rank: [1]
 Topic: ai_news_semantic
-Title: Stanford/Harvard: AI Agents 自發走向「混亂與欺騙」
-URL: https://x.com/alex_prompter/status/...
-Emotional Hook: 恐懼 & 警示
+Title: AI 自主解决 6 项未解数学研究难题
+URL: https://x.com/minchoi/status/...
+Emotional Hook: 震撼与认知颠覆
 ...
+```
+
+---
+
+## 第三階段：Manifest 彙整（選用）
+
+將多個 Agent 分析結果彙整成單一 Markdown 檔案，方便人工一次性閱讀。
+
+### 執行彙整
+
+```bash
+# 為指定 Agent 生成當日總覽
+python3 manifest_generator.py --agent traffic_catalyst --date today
+python3 manifest_generator.py --agent deep_research_scout --date today
+
+# 預覽輸出（不儲存）
+python3 manifest_generator.py --agent traffic_catalyst --date today --output stdout
+
+# 指定日期
+python3 manifest_generator.py --agent deep_research_scout --date 20260226
+```
+
+### 輸出位置
+
+`data/manifest/{agent_id}_{YYYYMMDD}.md`
+
+---
+
+## 定時自動執行
+
+使用 cron 設定每日自動執行：
+
+```bash
+# 編輯 crontab
+crontab -e
+
+# 加入以下行（台北時間）
+# 05:00 - 抓取資料（15 topics）
+0 5 * * * /home/openclaw/Projects/twitter-fetch/cron_fetch.sh
+
+# 06:00 - 分析資料（2 agents x 5 topic groups = 10 API calls）
+0 6 * * * /home/openclaw/Projects/twitter-fetch/cron_analyze.sh
+
+# 07:00 - 生成總覽（2 agents）
+0 7 * * * /home/openclaw/Projects/twitter-fetch/cron_manifest_generator.sh
 ```
 
 ---
@@ -168,19 +213,24 @@ Emotional Hook: 恐懼 & 警示
 
 ```
 twitter-fetch/
-├── .venv/                 # Python 虛擬環境
-├── configs/               # 配置檔（YAML）
-│   ├── fetch/             # Fetch 主題配置
-│   └── agent.yaml         # Agent 分析配置（必要）
+├── .venv/                      # Python 虛擬環境
+├── configs/                    # 配置檔（YAML）
+│   ├── fetch/                  # Fetch 主題配置
+│   └── agent.yaml              # Agent 分析配置（必要）
 ├── prompts/
-│   ├── fetch/             # 生成的搜尋 prompt
-│   └── agent/             # Agent 分析 prompt
+│   ├── fetch/                  # 生成的搜尋 prompt
+│   └── agent/                  # Agent 分析 prompt
 ├── data/
-│   ├── raw/               # Fetch 收集的原始資料
-│   └── refined/           # Agent 分析結果
-├── logs/                  # 執行日誌
-├── prompt_factory.py      # config → prompt 生成工具
-├── fetch.py               # Fetch 執行腳本
-├── analyze.py             # Agent 分析腳本
+│   ├── raw/                    # Fetch 收集的原始資料
+│   ├── refined/                # Agent 分析結果
+│   └── manifest/               # 每日彙整總覽（給人閱讀）
+├── logs/                       # 執行日誌
+├── cron_fetch.sh               # 定時抓取腳本
+├── cron_analyze.sh             # 定時分析腳本（多 Agent）
+├── cron_manifest_generator.sh  # 定時生成總覽腳本
+├── prompt_factory.py           # config → prompt 生成工具
+├── manifest_generator.py       # 分析結果彙整工具
+├── fetch.py                    # Fetch 執行腳本
+├── analyze.py                  # Agent 分析腳本
 └── requirements.txt
 ```

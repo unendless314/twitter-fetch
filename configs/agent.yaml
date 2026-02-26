@@ -2,7 +2,7 @@
 # 可選，不提供則使用 analyze.py 內的預設值
 
 # 預設 Provider
-default_provider: "qwen"  # 或 "gemini"
+default_provider: "gemini"  # 或 "gemini"
 
 # Provider 預設模型
 default_models:
